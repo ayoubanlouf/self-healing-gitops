@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gitops-microservice-prod
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: git://git-server.gitops.svc.cluster.local/repo.git
+    targetRevision: main
+    path: charts/app
+    helm:
+      valueFiles:
+        - values.yaml
+      values: |
+        env:
+          ENVIRONMENT: "production"
+          APP_VERSION: "v1.0.0"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: production
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,67 @@
+[2026-09-24T00:54:13.245799+00:00] =================================================================
+[2026-09-24T00:54:13.245799+00:00] AUTONOMOUS CLOSED-LOOP REMEDIATION VALIDATION SEQUENCE
+[2026-09-24T00:54:13.245799+00:00] =================================================================
+[2026-09-24T00:54:13.245799+00:00] [STAGE 1] Probing Baseline Workload Health at http://127.0.0.1:8000
+[2026-09-24T00:54:13.457848+00:00] Baseline Health Check OK: {'status': 'healthy', 'version': 'v1', 'chaos_active': False}
+[2026-09-24T00:54:13.457882+00:00] [STAGE 2] Triggering Synthetic Chaos Injection via POST /chaos/inject
+[2026-09-24T00:54:13.600760+00:00] Chaos Injected: {'status': 'chaos_active', 'message': 'Chaos injection enabled. GET / will now respond with HTTP 500.', 'injected_at': 1790211253.6349735}
+[2026-09-24T00:54:13.600760+00:00] [STAGE 3] Driving Concurrent Request Traffic to Burn Error Budget & Trigger Alert
+[2026-09-24T00:54:24.842878+00:00] Traffic Burst Finished: 600 requests sent, 600 500 status codes (100.0% failure rate)
+[2026-09-24T00:54:24.842878+00:00] [STAGE 4] Polling Prometheus Alert Evaluation API until AppHighErrorRate is FIRING
+[2026-09-24T00:54:25.008538+00:00] Found Alert AppHighErrorRate with State: PENDING (Value: 4.777777777777777e+00)
+[2026-09-24T00:54:27.146973+00:00] Found Alert AppHighErrorRate with State: PENDING (Value: 4.777777777777777e+00)
+[2026-09-24T00:54:29.281132+00:00] Found Alert AppHighErrorRate with State: PENDING (Value: 4.777777777777777e+00)
+[2026-09-24T00:54:31.423253+00:00] Found Alert AppHighErrorRate with State: FIRING (Value: 4.777777777777777e+00)
+[2026-09-24T00:54:31.423253+00:00] [STAGE 5] Capturing Visual Evidence: docs/images/02-prometheus-alert-firing.png
+[2026-09-24T00:54:38.489605+00:00] Screenshot 02-prometheus-alert-firing.png successfully captured.
+[2026-09-24T00:54:40.886942+00:00] [STAGE 6] Awaiting Remediator Autonomous Self-Healing Execution
+[2026-09-24T00:54:49.084382+00:00] [REMEDIATOR DAEMON POD LOGS]
+[2026-09-24T00:54:49.084382+00:00]   INFO:     Started server process [1]
+[2026-09-24T00:54:49.084382+00:00]   INFO:     Waiting for application startup.
+[2026-09-24T00:54:49.084382+00:00]   INFO:     Application startup complete.
+[2026-09-24T00:54:49.084382+00:00]   INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:32844 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:32850 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:32854 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:50434 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:50448 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:50464 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:43246 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:43254 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:43256 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:48702 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   {"timestamp": "2026-09-24T00:54:15.961737+00:00", "level": "INFO", "logger": "remediator", "message": "[ALERTMANAGER_WEBHOOK_RECEIVED] status=firing receiver=remediator-webhook alert_count=1", "event": "alertmanager_webhook_received", "status": "firing", "receiver": "remediator-webhook", "alert_count": 1}
+[2026-09-24T00:54:49.084382+00:00]   {"timestamp": "2026-09-24T00:54:15.961905+00:00", "level": "INFO", "logger": "remediator", "message": "[ALERT_INSPECTED] alertname=etcdInsufficientMembers severity=critical alert_status=firing target_app=gitops-microservice-prod", "event": "alert_inspected", "alertname": "etcdInsufficientMembers", "severity": "critical", "alert_status": "firing", "target_app": "gitops-microservice-prod"}
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.18:57000 - "POST /webhook HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:48708 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:48718 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   {"timestamp": "2026-09-24T00:54:22.912624+00:00", "level": "INFO", "logger": "remediator", "message": "[ALERTMANAGER_WEBHOOK_RECEIVED] status=firing receiver=remediator-webhook alert_count=1", "event": "alertmanager_webhook_received", "status": "firing", "receiver": "remediator-webhook", "alert_count": 1}
+[2026-09-24T00:54:49.084382+00:00]   {"timestamp": "2026-09-24T00:54:22.912838+00:00", "level": "INFO", "logger": "remediator", "message": "[ALERT_INSPECTED] alertname=Watchdog severity=none alert_status=firing target_app=gitops-microservice-prod", "event": "alert_inspected", "alertname": "Watchdog", "severity": "none", "alert_status": "firing", "target_app": "gitops-microservice-prod"}
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.18:57014 - "POST /webhook HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:36050 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:36054 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:36068 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:46034 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   {"timestamp": "2026-09-24T00:54:36.360265+00:00", "level": "INFO", "logger": "remediator", "message": "[ALERTMANAGER_WEBHOOK_RECEIVED] status=firing receiver=remediator-webhook alert_count=1", "event": "alertmanager_webhook_received", "status": "firing", "receiver": "remediator-webhook", "alert_count": 1}
+[2026-09-24T00:54:49.084382+00:00]   {"timestamp": "2026-09-24T00:54:36.360409+00:00", "level": "INFO", "logger": "remediator", "message": "[ALERT_INSPECTED] alertname=AppHighErrorRate severity=critical alert_status=firing target_app=gitops-microservice-prod", "event": "alert_inspected", "alertname": "AppHighErrorRate", "severity": "critical", "alert_status": "firing", "target_app": "gitops-microservice-prod"}
+[2026-09-24T00:54:49.084382+00:00]   {"timestamp": "2026-09-24T00:54:36.360483+00:00", "level": "WARNING", "logger": "remediator", "message": "[REMEDIATION_TRIGGERED] alertname=AppHighErrorRate target_app=gitops-microservice-prod reason=Error budget threshold breached. Executing automated remediation.", "event": "remediation_triggered", "alertname": "AppHighErrorRate", "target_app": "gitops-microservice-prod", "reason": "Error budget threshold breached. Executing automated remediation."}
+[2026-09-24T00:54:49.084382+00:00]   {"timestamp": "2026-09-24T00:54:36.360568+00:00", "level": "INFO", "logger": "remediator", "message": "[REMEDIATION_EXECUTION_STARTED] target_application=gitops-microservice-prod strategy=argocd_rollback", "event": "remediation_execution_started", "target_application": "gitops-microservice-prod", "strategy": "argocd_rollback"}
+[2026-09-24T00:54:49.084382+00:00]   {"timestamp": "2026-09-24T00:54:37.290875+00:00", "level": "INFO", "logger": "remediator", "message": "[ARGOCD_AUTH_SUCCESS] user=admin", "event": "argocd_auth_success", "user": "admin"}
+[2026-09-24T00:54:49.084382+00:00]   {"timestamp": "2026-09-24T00:54:37.301881+00:00", "level": "INFO", "logger": "remediator", "message": "[ARGOCD_APP_RETRIEVED] target_application=gitops-microservice-prod history_count=2", "event": "argocd_app_retrieved", "target_application": "gitops-microservice-prod", "history_count": 2}
+[2026-09-24T00:54:49.084382+00:00]   {"timestamp": "2026-09-24T00:54:37.315118+00:00", "level": "INFO", "logger": "remediator", "message": "[ARGOCD_ROLLBACK_API_INVOKED] target_application=gitops-microservice-prod target_id=1 status_code=200", "event": "argocd_rollback_api_invoked", "target_application": "gitops-microservice-prod", "target_id": 1, "status_code": 200}
+[2026-09-24T00:54:49.084382+00:00]   {"timestamp": "2026-09-24T00:54:37.346274+00:00", "level": "INFO", "logger": "remediator", "message": "[APP_CHAOS_RESET_INVOKED] target=http://gitops-microservice.production.svc.cluster.local/chaos/reset", "event": "app_chaos_reset_invoked", "target": "http://gitops-microservice.production.svc.cluster.local/chaos/reset"}
+[2026-09-24T00:54:49.084382+00:00]   {"timestamp": "2026-09-24T00:54:37.407986+00:00", "level": "INFO", "logger": "remediator", "message": "[APP_HEALTH_VERIFIED] status_code=200 content={'status': 'healthy', 'version': 'v1', 'chaos_active': False}", "event": "app_health_verified", "status_code": 200, "content": {"status": "healthy", "version": "v1", "chaos_active": false}}
+[2026-09-24T00:54:49.084382+00:00]   {"timestamp": "2026-09-24T00:54:37.408490+00:00", "level": "INFO", "logger": "remediator", "message": "[REMEDIATION_COMPLETED] target_application=gitops-microservice-prod result=SUCCESS remediation_action=rollback_and_circuit_breaker_reset", "event": "remediation_completed", "target_application": "gitops-microservice-prod", "result": "SUCCESS", "remediation_action": "rollback_and_circuit_breaker_reset"}
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.18:35144 - "POST /webhook HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:46044 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:46054 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:56052 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00]   INFO:     10.244.0.1:56064 - "GET /healthz HTTP/1.1" 200 OK
+[2026-09-24T00:54:49.084382+00:00] [STAGE 7] Verifying Microservice Nominal Recovery
+[2026-09-24T00:54:49.224758+00:00] Post-Remediation Health Status: {'status': 'healthy', 'version': 'v1', 'chaos_active': False}
+[2026-09-24T00:54:49.365599+00:00] Post-Remediation Main Workload Status: {'status': 'ok', 'message': 'Autonomous GitOps Microservice operating nominally', 'version': 'v1', 'environment': 'production'}
+[2026-09-24T00:54:49.365599+00:00] [STAGE 8] Capturing Visual Evidence: docs/images/03-argocd-rollback-history.png
+[2026-09-24T00:55:00.236429+00:00] Screenshot 03-argocd-rollback-history.png successfully captured.
+[2026-09-24T00:55:02.448339+00:00] =================================================================
+[2026-09-24T00:55:02.448339+00:00] AUTONOMOUS CLOSED-LOOP REMEDIATION SEQUENCE COMPLETED SUCCESSFULLY
+[2026-09-24T00:55:02.448339+00:00] =================================================================

@@ -1,0 +1,51 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: ephemeral-pr-environments
+  namespace: argocd
+spec:
+  generators:
+    - pullRequest:
+        github:
+          owner: platform-org
+          repo: autonomous-gitops-platform
+          labels:
+            - preview-env
+        requeueAfterSeconds: 60
+  template:
+    metadata:
+      name: 'pr-{{number}}-microservice'
+      namespace: argocd
+      labels:
+        environment: preview
+        pr-number: '{{number}}'
+    spec:
+      project: default
+      source:
+        repoURL: '{{head_repo_url}}'
+        targetRevision: '{{head_sha}}'
+        path: charts/app
+        helm:
+          valueFiles:
+            - values.yaml
+          values: |
+            replicaCount: 1
+            env:
+              ENVIRONMENT: "pr-{{number}}"
+              APP_VERSION: "{{head_short_sha}}"
+            resources:
+              limits:
+                cpu: 100m
+                memory: 128Mi
+              requests:
+                cpu: 25m
+                memory: 32Mi
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'pr-{{number}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

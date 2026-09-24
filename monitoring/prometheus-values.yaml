@@ -1,0 +1,66 @@
+global:
+  rbac:
+    create: true
+
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    scrapeInterval: 10s
+    evaluationInterval: 10s
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 1024Mi
+
+alertmanager:
+  alertmanagerSpec:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+  config:
+    global:
+      resolve_timeout: 1m
+    route:
+      group_by: ['alertname', 'namespace', 'service']
+      group_wait: 5s
+      group_interval: 10s
+      repeat_interval: 1m
+      receiver: 'remediator-webhook'
+      routes:
+        - matchers:
+            - alertname = "AppHighErrorRate"
+          receiver: 'remediator-webhook'
+          continue: false
+    receivers:
+      - name: 'remediator-webhook'
+        webhook_configs:
+          - url: 'http://remediator.default.svc.cluster.local:8080/webhook'
+            send_resolved: true
+            http_config:
+              bearer_token: ""
+
+grafana:
+  enabled: true
+  adminPassword: "prom-operator"
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+kubeStateMetrics:
+  enabled: true
+
+nodeExporter:
+  enabled: false

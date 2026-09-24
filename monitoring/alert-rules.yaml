@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: app-error-rate-alerts
+  namespace: monitoring
+  labels:
+    role: alert-rules
+    release: prometheus-stack
+    app.kubernetes.io/part-of: kube-prometheus-stack
+spec:
+  groups:
+    - name: app.alerts
+      interval: 10s
+      rules:
+        - alert: AppHighErrorRate
+          expr: sum(rate(http_requests_total{status=~"5.."}[1m])) > 0.01
+          for: 10s
+          labels:
+            severity: critical
+            app: gitops-microservice
+            target_application: gitops-microservice-prod
+            action: rollback
+          annotations:
+            summary: "Critical Error Budget Burn Detected on {{ $labels.app }}"
+            description: "Microservice 5xx rate exceeded 5% threshold over the past minute (current rate: {{ $value }}). Automated closed-loop remediation required."
+            runbook_url: "https://wiki.platform.local/runbooks/AppHighErrorRate"

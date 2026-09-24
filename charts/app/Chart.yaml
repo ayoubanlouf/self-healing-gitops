@@ -1,0 +1,9 @@
+apiVersion: v2
+name: gitops-microservice
+description: Production-grade Helm chart for Autonomous GitOps Microservice
+type: application
+version: 0.1.0
+appVersion: "v1.0.0"
+maintainers:
+  - name: SRE Platform Team
+    email: sre@platform.local
